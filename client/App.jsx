@@ -17,16 +17,23 @@ App = React.createClass({
     });
   },
 
+  getNext() {
+    Meteor.call("getNext");
+  },
+
   render() {
     return (
         <div className="container">
           <header>
-            <h1>Bee[r] Random </h1>
+            <h1>Bee[r]andom </h1>
           </header>
 
           <ul>
             {this.renderTasks()}
           </ul>
+          <button className="toggle-private" onClick={this.getNext}>
+            Get More Beer
+          </button>
         </div>
     );
   }
