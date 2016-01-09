@@ -8,7 +8,7 @@ Beer = React.createClass({
   render() {
     return (
 
-          <li>
+          <li className="beer">
             <img src={this.props.beer.image_url}
                  alt={this.props.beer.name}
                  width="400px"

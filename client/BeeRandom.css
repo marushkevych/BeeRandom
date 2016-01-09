@@ -132,3 +132,8 @@ img.center {
     margin-left: auto;
     margin-right: auto;
 }
+
+li.beer {
+    width: 570px;
+    height: 540px;
+}

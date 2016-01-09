@@ -16,27 +16,33 @@ Meteor.methods({
 
 });
 
-
+// TODO skip results with no image
 
 function getNextBeer(){
 
   var pageInfo = getBeers(1);
 
-  var pages = pageInfo.data.pager.total_pages;
+  var totalPages = pageInfo.pager.total_pages;
 
-  var result = getBeers(getRandomInt(pages));
+  var beers = getBeers(getRandomInclusive(totalPages)).result;
 
-  return result.data.result[0];
+  return beers[getRandomArrayIndex(beers.length)];
 }
 
 function getBeers(page){
   var params = {store_id: 511, q: 'beer', order: 'id.asc', page: page};
-  return HTTP.call('GET', 'http://lcboapi.com/products', {params});
+  var result = HTTP.call('GET', 'http://lcboapi.com/products', {params});
+  return result.data;
 }
 
 /**
  * Get random between 1 and max inclusive
  */
-function getRandomInt(max) {
+function getRandomInclusive(max) {
   return Math.floor(Math.random() * (max)) + 1;
+}
+
+
+function getRandomArrayIndex(length) {
+  return Math.floor(Math.random() * length);
 }
