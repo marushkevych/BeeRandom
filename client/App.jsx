@@ -7,14 +7,23 @@ App = React.createClass({
   // and makes returned object available as this.data
   getMeteorData() {
     return {
-      tasks: Tasks.find({}, {sort: {createdAt: -1}, limit: 1}).fetch()
+      beer: Tasks.find({}, {sort: {createdAt: -1}, limit: 1}).fetch()[0]
     }
   },
 
-  renderTasks() {
-    return this.data.tasks.map((task) => {
-      return <Task key={task._id} task={task} />;
-    });
+  renderBeer() {
+    var beer = this.data.beer || {};
+    return (
+        <ul>
+          <li>
+            <button className="getbeer" onClick={this.getNext}>
+              Get More Beer
+            </button>
+            {beer.name || "No beer yet"}
+          </li>
+            <Task key={beer._id} task={beer} />
+        </ul>
+    );
   },
 
   getNext() {
@@ -23,17 +32,16 @@ App = React.createClass({
 
   render() {
     return (
-        <div className="container">
-          <header>
-            <h1>Bee[r]andom </h1>
-          </header>
+        <div>
+          <div className="container">
+            <header>
+              <h1>Bee[r]andom </h1>
+            </header>
 
-          <ul>
-            {this.renderTasks()}
-          </ul>
-          <button className="toggle-private" onClick={this.getNext}>
-            Get More Beer
-          </button>
+
+              {this.renderBeer()}
+          </div>
+
         </div>
     );
   }

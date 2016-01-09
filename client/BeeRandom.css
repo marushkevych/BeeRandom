@@ -70,13 +70,14 @@ ul {
     background: white;
 }
 
-.delete {
+.getbeer {
     float: right;
     font-weight: bold;
-    background: none;
+    /*background: none;*/
     font-size: 1em;
-    border: none;
+    /*border: none;*/
     position: relative;
+    cursor: pointer;
 }
 
 li {
@@ -124,4 +125,10 @@ header .hide-completed {
     .new-task input {
         padding-bottom: 5px;
     }
+}
+
+img.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }

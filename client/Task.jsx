@@ -7,7 +7,13 @@ Task = React.createClass({
   },
   render() {
     return (
-        <li>{this.props.task.text}</li>
+
+          <li>
+            <img src={this.props.task.image_url}
+                 alt={this.props.task.name}
+                 width="400px"
+                 className="center"></img>
+          </li>
     );
   }
 });
