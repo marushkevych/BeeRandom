@@ -1,16 +1,17 @@
 Meteor.publish("beers", function () {
-  return Beers.find({}, { fields: { createdAt: 1, name: 1, image_url: 1 } });
+  return Beers.find({userId: this.userId}, { fields: { createdAt: 1, name: 1, image_url: 1 } });
 });
 
 Meteor.methods({
   getNext() {
     // Make sure the user is logged in before inserting a task
-    //if (! Meteor.userId()) {
-    //  throw new Meteor.Error("not-authorized");
-    //}
+    if (! Meteor.userId()) {
+      throw new Meteor.Error("not-authorized");
+    }
 
     var beer = getNextBeer();
     beer.createdAt = new Date();
+    beer.userId = Meteor.userId();
     Beers.insert(beer);
   },
 

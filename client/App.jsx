@@ -36,10 +36,12 @@ App = React.createClass({
           <div className="container">
             <header>
               <h1>Bee[r]andom </h1>
+              <AccountsUIWrapper />
             </header>
 
 
-              {this.renderBeer()}
+            {this.renderBeer()}
+
           </div>
 
         </div>
