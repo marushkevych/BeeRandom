@@ -9,15 +9,32 @@ Meteor.methods({
       throw new Meteor.Error("not-authorized");
     }
 
-    var beer = getNextBeer();
-    beer.createdAt = new Date();
-    beer.userId = Meteor.userId();
-    Beers.insert(beer);
+    insertRandomBeer();
   },
 
 });
 
-// TODO skip results with no image
+
+function insertRandomBeer(){
+  var beer = getNextBeer();
+
+  // skip beer if no image
+  if(beer.image_url == null) {
+    insertRandomBeer();
+    return;
+  }
+
+  beer.createdAt = new Date();
+  beer.userId = Meteor.userId();
+
+  try {
+    Beers.insert(beer);
+  } catch (error) {
+    console.log(JSON.stringify(error));
+    // duplicate
+    insertRandomBeer();
+  }
+}
 
 function getNextBeer(){
 
@@ -28,6 +45,9 @@ function getNextBeer(){
   var beers = getBeers(getRandomInclusive(totalPages)).result;
 
   return beers[getRandomArrayIndex(beers.length)];
+
+
+  //return pageInfo.result[0];
 }
 
 function getBeers(page){
