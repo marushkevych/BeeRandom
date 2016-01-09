@@ -1,15 +1,18 @@
 // App component - represents the whole app
 App = React.createClass({
-  getTasks() {
-    return [
-      { _id: 1, text: "This is task 1" },
-      { _id: 2, text: "This is task 2" },
-      { _id: 3, text: "This is task 3" }
-    ];
+  // This mixin makes the getMeteorData method work
+  mixins: [ReactMeteorData],
+
+  // this is called reactively when data changes
+  // and makes returned object available as this.data
+  getMeteorData() {
+    return {
+      tasks: Tasks.find({}, {sort: {createdAt: -1}, limit: 1}).fetch()
+    }
   },
 
   renderTasks() {
-    return this.getTasks().map((task) => {
+    return this.data.tasks.map((task) => {
       return <Task key={task._id} task={task} />;
     });
   },
@@ -18,7 +21,7 @@ App = React.createClass({
     return (
         <div className="container">
           <header>
-            <h1>Todo List</h1>
+            <h1>Bee[r] Random </h1>
           </header>
 
           <ul>
