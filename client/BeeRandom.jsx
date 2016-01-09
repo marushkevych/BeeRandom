@@ -1,4 +1,4 @@
-Meteor.subscribe("tasks");
+Meteor.subscribe("beers");
 
 Meteor.startup(function () {
   // Use Meteor.startup to render the component after the page is ready

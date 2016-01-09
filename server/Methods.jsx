@@ -1,5 +1,5 @@
-Meteor.publish("tasks", function () {
-  return Tasks.find();
+Meteor.publish("beers", function () {
+  return Beers.find();
 });
 
 Meteor.methods({
@@ -11,12 +11,12 @@ Meteor.methods({
 
     var beer = getNextBeer();
     beer.createdAt = new Date();
-    Tasks.insert(beer);
+    Beers.insert(beer);
   },
 
 });
 
-var index = 0;
+var index = -1;
 
 
 function getNextBeer(){

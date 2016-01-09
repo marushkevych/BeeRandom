@@ -1,16 +1,16 @@
 // Task component - represents a single todo item
-Task = React.createClass({
+Beer = React.createClass({
   propTypes: {
     // This component gets the task to display through a React prop.
     // We can use propTypes to indicate it is required
-    task: React.PropTypes.object.isRequired
+    beer: React.PropTypes.object.isRequired
   },
   render() {
     return (
 
           <li>
-            <img src={this.props.task.image_url}
-                 alt={this.props.task.name}
+            <img src={this.props.beer.image_url}
+                 alt={this.props.beer.name}
                  width="400px"
                  className="center"></img>
           </li>
