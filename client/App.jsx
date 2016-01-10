@@ -47,9 +47,11 @@ App = React.createClass({
             <header>
               <h1>Bee[r]andom </h1>
 
-              <label className="hide-completed">
-                Total beers drank: <h1>{this.data.count}</h1>
-              </label>
+              { this.data.currentUser ?
+                  <label className="hide-completed">
+                    Total beers drank: <h1>{this.data.count}</h1>
+                  </label> : ''
+              }
               <AccountsUIWrapper />
             </header>
 
