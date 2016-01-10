@@ -15,7 +15,7 @@ App = React.createClass({
 
   onLogin: function() {
     this.setState({error: false});
-    if(this.data.beer == null){
+    if(this.data.count === 0){
       this.getNext();
     }
   },
@@ -77,7 +77,6 @@ App = React.createClass({
           <div className="container">
             <header>
               <h1>Bee[r]andom </h1>
-
               { this.data.currentUser ?
                   <label className="hide-completed">
                     Total beers drank: <h1>{this.data.count}</h1>
@@ -85,12 +84,8 @@ App = React.createClass({
               }
               <AccountsUIWrapper />
             </header>
-
-
             {this.renderBeer()}
-
           </div>
-
         </div>
     );
   }

@@ -16,10 +16,8 @@ Beer = React.createClass({
 
   render() {
     return (
-
           <li className="beer">
             {this.renderBeer()}
-
           </li>
     );
   }

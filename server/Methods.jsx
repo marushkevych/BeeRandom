@@ -8,11 +8,11 @@ Meteor.methods({
     if (! Meteor.userId()) {
       throw new Meteor.Error("not-authorized");
     }
-
     getNextBeer();
   }
 
 });
+
 
 function getNextBeer(){
   var currentPage = getCurrentPage();
@@ -32,7 +32,6 @@ function getCurrentPage(){
   if(currentPage == null){
     currentPage = insertFirstPage();
   }
-
 
   if(currentPage.page.result.length === 0){
     currentPage = loadNextPage(currentPage);
@@ -67,6 +66,7 @@ function removeBeerFromCurrentPage(){
   CurrentPage.update({userId: Meteor.userId()}, {$pop: {'page.result': 1}});
 }
 
+
 function insertFirstPage(){
   var page = {
     userId: Meteor.userId(),
@@ -76,6 +76,7 @@ function insertFirstPage(){
   CurrentPage.insert(page);
   return page;
 }
+
 
 function loadNextPage(currentPage){
   var pageNumber = currentPage.page.pager.next_page;
@@ -91,42 +92,15 @@ function loadNextPage(currentPage){
   return page;
 }
 
+
 function getBeers(pageNumber){
   var params = {store_id: 511, q: 'beer', order: 'id.asc', page: pageNumber};
   var result = HTTP.call('GET', 'http://lcboapi.com/products', {params});
   return shuffleBeers(result.data);
 }
 
+
 function shuffleBeers(page){
   page.result = _.shuffle(page.result);
   return page;
 }
-
-
-
-
-///**
-// * Get random between 1 and max inclusive
-// */
-//function getRandomInclusive(max) {
-//  return Math.floor(Math.random() * (max)) + 1;
-//}
-//
-//
-//function getRandomArrayIndex(length) {
-//  return Math.floor(Math.random() * length);
-//}
-
-//function getNextBeer(){
-//
-//  var pageInfo = getBeers(1);
-//
-//  var totalPages = pageInfo.pager.total_pages;
-//
-//  var beers = getBeers(getRandomInclusive(totalPages)).result;
-//
-//  return beers[getRandomArrayIndex(beers.length)];
-//
-//
-//  //return pageInfo.result[0];
-//}
