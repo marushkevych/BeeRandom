@@ -49,9 +49,16 @@ App = React.createClass({
     });
     Meteor.call('getNext', (error, result) => {
       if(error){
-        this.setState({
-          error: 'No More Beer :('
-        });
+        if(error.error === 'NO_MORE_BEER'){
+          this.setState({
+            error: 'No More Beer :('
+          });
+        } else {
+          console.log(error);
+          this.setState({
+            error: 'Sorry an error has occurred'
+          });
+        }
       }
       stop();
 

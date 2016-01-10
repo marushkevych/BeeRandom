@@ -91,10 +91,15 @@ function loadNextPage(currentPage){
   return page;
 }
 
-function getBeers(page){
-  var params = {store_id: 511, q: 'beer', order: 'id.asc', page: page};
+function getBeers(pageNumber){
+  var params = {store_id: 511, q: 'beer', order: 'id.asc', page: pageNumber};
   var result = HTTP.call('GET', 'http://lcboapi.com/products', {params});
-  return result.data;
+  return shuffleBeers(result.data);
+}
+
+function shuffleBeers(page){
+  page.result = _.shuffle(page.result);
+  return page;
 }
 
 
