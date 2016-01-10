@@ -7,7 +7,8 @@ App = React.createClass({
   // and makes returned object available as this.data
   getMeteorData() {
     return {
-      beer: Beers.find({}, {sort: {createdAt: -1}, limit: 1}).fetch()[0]
+      beer: Beers.find({}, {sort: {createdAt: -1}, limit: 1}).fetch()[0],
+      currentUser: Meteor.user()
     }
   },
 
@@ -21,7 +22,7 @@ App = React.createClass({
             </button>
             {beer.name || "No beer yet"}
           </li>
-            <Beer key={beer._id} beer={beer} />
+            <Beer key={beer._id} beer={beer} user={this.data.currentUser} />
         </ul>
     );
   },

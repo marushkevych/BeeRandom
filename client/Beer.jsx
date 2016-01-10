@@ -5,14 +5,21 @@ Beer = React.createClass({
     // We can use propTypes to indicate it is required
     beer: React.PropTypes.object.isRequired
   },
+
+  renderBeer() {
+    if(this.props.user){
+      return <img src={this.props.beer.image_url} width="400px" className="center"></img>;
+    } else {
+      return <div className="center">Please Login</div>
+    }
+  },
+
   render() {
     return (
 
           <li className="beer">
-            <img src={this.props.beer.image_url}
-                 alt={this.props.beer.name}
-                 width="400px"
-                 className="center"></img>
+            {this.renderBeer()}
+
           </li>
     );
   }
