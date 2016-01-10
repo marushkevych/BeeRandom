@@ -32,6 +32,7 @@ function insertRandomBeer(){
   } catch (error) {
     console.log(JSON.stringify(error));
     // duplicate
+    //TODO set max attempts, sleep
     insertRandomBeer();
   }
 }

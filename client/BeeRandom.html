@@ -3,5 +3,19 @@
 </head>
 
 <body>
+<div id="spinner"></div>
 <div id="render-target"></div>
+<script>
+
+  var target = document.getElementById('spinner');
+  var spinner = new Spinner({top: '10%'});
+
+  spin = function spin(){
+    spinner.spin(target);
+  }
+
+  stop = function stop(){
+    spinner.stop();
+  }
+</script>
 </body>

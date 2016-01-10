@@ -27,7 +27,11 @@ App = React.createClass({
   },
 
   getNext() {
-    Meteor.call("getNext");
+    spin();
+    Meteor.call("getNext", function (error, result) {
+      stop();
+
+    });
   },
 
   render() {
