@@ -36,6 +36,11 @@ App = React.createClass({
   },
 
   render() {
+    // get beer on first login
+    if(this.data.currentUser && !this.data.beer){
+      this.getNext();
+    }
+
     return (
         <div>
           <div className="container">
