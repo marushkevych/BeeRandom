@@ -17,9 +17,11 @@ App = React.createClass({
     return (
         <ul>
           <li>
-            <button className="getbeer" onClick={this.getNext}>
-              Get More Beer
-            </button>
+            { this.data.currentUser ?
+                <button className="getbeer" onClick={this.getNext}>
+                  Get More Beer
+                </button> : ''
+            }
             {beer.name || "No beer yet"}
           </li>
             <Beer key={beer._id} beer={beer} user={this.data.currentUser} />
@@ -36,10 +38,6 @@ App = React.createClass({
   },
 
   render() {
-    // get beer on first login
-    if(this.data.currentUser && !this.data.beer){
-      this.getNext();
-    }
 
     return (
         <div>
