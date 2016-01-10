@@ -9,6 +9,17 @@ App = React.createClass({
     }
   },
 
+  componentDidMount: function() {
+    Accounts.onLogin(this.onLogin);
+  },
+
+  onLogin: function() {
+    this.setState({error: false});
+    if(this.data.beer == null){
+      this.getNext();
+    }
+  },
+
   // this is called reactively when data changes
   // and makes returned object available as this.data
   getMeteorData() {
@@ -44,20 +55,14 @@ App = React.createClass({
 
   getNext() {
     spin();
-    this.setState({
-      error: false
-    });
+    this.setState({error: false});
     Meteor.call('getNext', (error, result) => {
       if(error){
         if(error.error === 'NO_MORE_BEER'){
-          this.setState({
-            error: 'No More Beer :('
-          });
+          this.setState({error: 'No More Beer :('});
         } else {
           console.log(error);
-          this.setState({
-            error: 'Sorry an error has occurred'
-          });
+          this.setState({error: 'Sorry an error has occurred'});
         }
       }
       stop();
