@@ -1,26 +1,32 @@
 Meteor.publish("beers", function () {
-  return Beers.find({userId: this.userId}, { fields: { createdAt: 1, name: 1, image_url: 1 } });
+  return Beers.find({userId: this.userId}, {
+    fields: { createdAt: 1, name: 1, image_url: 1 }
+  });
 });
 
-Meteor.methods({
-  getNext() {
-    // Make sure the user is logged in before loading next beer
-    if (! Meteor.userId()) {
-      throw new Meteor.Error("not-authorized");
-    }
-    getNextBeer();
+Meteor.methods({getNext});
+
+/**
+ * Moves next random beer from CurrentPage collection
+ * to Beers collection (registry of visited beers)
+ */
+function getNext(){
+  // Make sure the user is logged in before loading next beer
+  if (! Meteor.userId()) {
+    throw new Meteor.Error("not-authorized");
   }
 
-});
-
-
-function getNextBeer(){
   var currentPage = getCurrentPage();
 
-  var nextBeer = currentPage.page.result.pop();
-
   removeBeerFromCurrentPage();
-  addBeer(nextBeer);
+  addBeer(currentPage.page.result.pop());
+}
+
+/**
+ * Deletes next beer from CurrentPage collection
+ */
+function removeBeerFromCurrentPage(){
+  CurrentPage.update({userId: Meteor.userId()}, {$pop: {'page.result': 1}});
 }
 
 /**
@@ -39,12 +45,20 @@ function getCurrentPage(){
   return currentPage;
 }
 
-
+/**
+ * Add a beer to Beers collection (registry of visited beers).
+ * Will skip given beer and proceed to next one if:
+ *  - beer already exist in Beers collection
+ *  - beer is not a beer
+ *  - beer has no image
+ *
+ * @param beer
+ */
 function addBeer(beer){
 
   // skip if no image, or if not Beer (sometimes we get wines tagged as beer)
   if(beer.image_url == null || beer.primary_category !== "Beer") {
-    getNextBeer();
+    getNext();
     return;
   }
 
@@ -57,16 +71,14 @@ function addBeer(beer){
     console.log(JSON.stringify(error));
     // duplicate
     //TODO set max attempts, sleep
-    getNextBeer();
+    getNext();
   }
 }
 
-
-function removeBeerFromCurrentPage(){
-  CurrentPage.update({userId: Meteor.userId()}, {$pop: {'page.result': 1}});
-}
-
-
+/**
+ * Gets first page from the store and inserts it into CurrentPage collection
+ * @returns inserted page
+ */
 function insertFirstPage(){
   var page = {
     userId: Meteor.userId(),
@@ -77,7 +89,13 @@ function insertFirstPage(){
   return page;
 }
 
-
+/**
+ * Get next available page of beers and saves it in db.
+ *
+ * @param currentPage
+ * @returns nextPage
+ * @throws 'NO_MORE_BEER' error if there are no more pages
+ */
 function loadNextPage(currentPage){
   var pageNumber = currentPage.page.pager.next_page;
   if(pageNumber == null){
@@ -92,14 +110,24 @@ function loadNextPage(currentPage){
   return page;
 }
 
-
+/**
+ * Retrieves a page of beers from store #511
+ *
+ * @param pageNumber
+ * @returns page with shuffled beers
+ */
 function getBeers(pageNumber){
   var params = {store_id: 511, q: 'beer', order: 'id.asc', page: pageNumber};
   var result = HTTP.call('GET', 'http://lcboapi.com/products', {params});
   return shuffleBeers(result.data);
 }
 
-
+/**
+ * Shuffled beers in the page object
+ *
+ * @param page
+ * @returns page with shuffled beers
+ */
 function shuffleBeers(page){
   page.result = _.shuffle(page.result);
   return page;
