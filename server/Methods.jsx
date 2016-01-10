@@ -4,23 +4,48 @@ Meteor.publish("beers", function () {
 
 Meteor.methods({
   getNext() {
-    // Make sure the user is logged in before inserting a task
+    // Make sure the user is logged in before loading next beer
     if (! Meteor.userId()) {
       throw new Meteor.Error("not-authorized");
     }
 
-    insertRandomBeer();
+    getNextBeer();
   }
 
 });
 
+function getNextBeer(){
+  var currentPage = getCurrentPage();
 
-function insertRandomBeer(){
-  var beer = getNextBeer();
+  var nextBeer = currentPage.page.result.pop();
+
+  removeBeerFromCurrentPage();
+  addBeer(nextBeer);
+}
+
+/**
+ * Get current page from DB, or load next page if current page has no entries left
+ */
+function getCurrentPage(){
+  var currentPage = CurrentPage.findOne({userId: Meteor.userId()});
+
+  if(currentPage == null){
+    currentPage = insertFirstPage();
+  }
+
+
+  if(currentPage.page.result.length === 0){
+    currentPage = loadPage(currentPage.page.pager.next_page);
+  }
+  return currentPage;
+}
+
+
+function addBeer(beer){
 
   // skip if no image, or if not Beer (sometimes we get wines tagged as beer)
   if(beer.image_url == null || beer.primary_category !== "Beer") {
-    insertRandomBeer();
+    getNextBeer();
     return;
   }
 
@@ -33,22 +58,32 @@ function insertRandomBeer(){
     console.log(JSON.stringify(error));
     // duplicate
     //TODO set max attempts, sleep
-    insertRandomBeer();
+    getNextBeer();
   }
 }
 
-function getNextBeer(){
 
-  var pageInfo = getBeers(1);
+function removeBeerFromCurrentPage(){
+  CurrentPage.update({userId: Meteor.userId()}, {$pop: {'page.result': 1}});
+}
 
-  var totalPages = pageInfo.pager.total_pages;
+function insertFirstPage(){
+  var page = {
+    userId: Meteor.userId(),
+    page: getBeers(1)
+  };
 
-  var beers = getBeers(getRandomInclusive(totalPages)).result;
+  CurrentPage.insert(page);
+  return page;
+}
 
-  return beers[getRandomArrayIndex(beers.length)];
-
-
-  //return pageInfo.result[0];
+function loadPage(pageNumber){
+  var page = {
+    userId: Meteor.userId(),
+    page: getBeers(pageNumber)
+  };
+  CurrentPage.update({userId: Meteor.userId()}, page);
+  return page;
 }
 
 function getBeers(page){
@@ -57,14 +92,31 @@ function getBeers(page){
   return result.data;
 }
 
-/**
- * Get random between 1 and max inclusive
- */
-function getRandomInclusive(max) {
-  return Math.floor(Math.random() * (max)) + 1;
-}
 
 
-function getRandomArrayIndex(length) {
-  return Math.floor(Math.random() * length);
-}
+
+///**
+// * Get random between 1 and max inclusive
+// */
+//function getRandomInclusive(max) {
+//  return Math.floor(Math.random() * (max)) + 1;
+//}
+//
+//
+//function getRandomArrayIndex(length) {
+//  return Math.floor(Math.random() * length);
+//}
+
+//function getNextBeer(){
+//
+//  var pageInfo = getBeers(1);
+//
+//  var totalPages = pageInfo.pager.total_pages;
+//
+//  var beers = getBeers(getRandomInclusive(totalPages)).result;
+//
+//  return beers[getRandomArrayIndex(beers.length)];
+//
+//
+//  //return pageInfo.result[0];
+//}
