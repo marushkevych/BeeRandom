@@ -3,6 +3,12 @@ App = React.createClass({
   // This mixin makes the getMeteorData method work
   mixins: [ReactMeteorData],
 
+  getInitialState() {
+    return {
+      error: false
+    }
+  },
+
   // this is called reactively when data changes
   // and makes returned object available as this.data
   getMeteorData() {
@@ -26,14 +32,27 @@ App = React.createClass({
             }
             {beer.name || "No beer yet"}
           </li>
-            <Beer key={beer._id} beer={beer} user={this.data.currentUser} />
+
+          { this.state.error ?
+            <li className="error">{this.state.error}</li> : ''
+          }
+          <Beer key={beer._id} beer={beer} user={this.data.currentUser} />
+
         </ul>
     );
   },
 
   getNext() {
     spin();
-    Meteor.call("getNext", function (error, result) {
+    this.setState({
+      error: false
+    });
+    Meteor.call('getNext', (error, result) => {
+      if(error){
+        this.setState({
+          error: 'No More Beer :('
+        });
+      }
       stop();
 
     });

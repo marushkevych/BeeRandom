@@ -138,3 +138,9 @@ li.beer {
     width: 570px;
     height: 540px;
 }
+
+li.error {
+    text-align: center;
+    color: darkred;
+    border-bottom: none;
+}

@@ -35,7 +35,7 @@ function getCurrentPage(){
 
 
   if(currentPage.page.result.length === 0){
-    currentPage = loadPage(currentPage.page.pager.next_page);
+    currentPage = loadNextPage(currentPage);
   }
   return currentPage;
 }
@@ -77,7 +77,12 @@ function insertFirstPage(){
   return page;
 }
 
-function loadPage(pageNumber){
+function loadNextPage(currentPage){
+  var pageNumber = currentPage.page.pager.next_page;
+  if(pageNumber == null){
+    throw new Meteor.Error('NO_MORE_BEER');
+  }
+
   var page = {
     userId: Meteor.userId(),
     page: getBeers(pageNumber)
