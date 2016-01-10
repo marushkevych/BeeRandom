@@ -10,7 +10,7 @@ Meteor.methods({
     }
 
     insertRandomBeer();
-  },
+  }
 
 });
 
@@ -18,8 +18,8 @@ Meteor.methods({
 function insertRandomBeer(){
   var beer = getNextBeer();
 
-  // skip beer if no image
-  if(beer.image_url == null) {
+  // skip if no image, or if not Beer (sometimes we get wines tagged as beer)
+  if(beer.image_url == null || beer.primary_category !== "Beer") {
     insertRandomBeer();
     return;
   }
