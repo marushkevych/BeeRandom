@@ -6,9 +6,11 @@ App = React.createClass({
   // this is called reactively when data changes
   // and makes returned object available as this.data
   getMeteorData() {
+    var beers = Beers.find({}, {sort: {createdAt: -1}, limit: 1}).fetch();
     return {
-      beer: Beers.find({}, {sort: {createdAt: -1}, limit: 1}).fetch()[0],
-      currentUser: Meteor.user()
+      beer: beers[0],
+      currentUser: Meteor.user(),
+      count: Beers.find().count()
     }
   },
 
@@ -44,6 +46,10 @@ App = React.createClass({
           <div className="container">
             <header>
               <h1>Bee[r]andom </h1>
+
+              <label className="hide-completed">
+                Total beers drank: <h1>{this.data.count}</h1>
+              </label>
               <AccountsUIWrapper />
             </header>
 
