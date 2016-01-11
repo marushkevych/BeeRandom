@@ -3,13 +3,6 @@ App = React.createClass({
   // This mixin makes the getMeteorData method work
   mixins: [ReactMeteorData],
 
-  getInitialState() {
-    return {
-      error: false,
-      index: 0
-    }
-  },
-
   componentDidMount: function() {
     Accounts.onLogin(this.onLogin);
   },
@@ -34,17 +27,23 @@ App = React.createClass({
     }
   },
 
+  getInitialState() {
+    return {
+      error: false,
+      index: 0
+    }
+  },
+
   renderBeer() {
 
     var index = 0;
 
     // if in history mode
-    if(this.state.index !== 0){
-      index = this.state.index + this.data.count - this.state.historySize;
+    if(this.isHistoryMode()){
+      index = this.getHistoryIndex();
     }
 
     var beer = this.data.beers[index] || {};
-
 
     return (
         <ul>
@@ -73,27 +72,41 @@ App = React.createClass({
     );
   },
 
+  isHistoryMode() {
+    return this.state.index !== 0;
+  },
+
+  getHistoryIndex() {
+    return this.data.count - this.state.index;
+  },
+
   showBackButton() {
-    return this.state.index < this.data.count - 1;
+    console.log(this.state.index, this.data.count, this.getHistoryIndex());
+    return (this.state.index === 0 && this.data.count > 1) || this.state.index > 1;
   },
 
   showForwardButton() {
-    return this.state.index > 0;
+    return this.isHistoryMode();
   },
 
   back() {
     if(this.showBackButton()){
-      if(this.state.index === 0){
+      if(!this.isHistoryMode()){
         // enter history mode
-        this.state.historySize = this.data.count;
+        this.setState({index: this.data.count - 1});
+      } else {
+        this.setState({index: this.state.index - 1});
       }
-      this.setState({index: this.state.index + 1});
     }
   },
 
   forward() {
     if(this.showForwardButton()){
-      this.setState({index: this.state.index - 1});
+      if(this.getHistoryIndex() - 1 === 0) {
+        this.setState({index: 0});
+      } else {
+        this.setState({index: this.state.index + 1});
+      }
     }
   },
 
