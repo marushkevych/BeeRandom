@@ -11,6 +11,13 @@ and will sync to all your connected devices in real time.
 
 Never drink the same beer twice - uniqueness guaranteed!
 
+#### Features
+* Sync your current beer and history across all logged-in devices
+* New beer will appear on all devices immediately
+* Show beers total
+* Navigate through full history of beers
+* Show current beer number
+
 #### Technologies:
 * React.js
 * Meteor

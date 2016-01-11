@@ -8,7 +8,7 @@ App = React.createClass({
   },
 
   onLogin: function() {
-    this.setState({error: false});
+    this.setState({error: false, index: null});
     if(this.data.count === 0){
       this.getNext();
     }
@@ -30,7 +30,7 @@ App = React.createClass({
   getInitialState() {
     return {
       error: false,
-      index: 0
+      index: null
     }
   },
 
@@ -57,6 +57,7 @@ App = React.createClass({
             <button disabled={!this.showBackButton()} className="history" onClick={this.back}>
               &#10094;
             </button>
+            {this.state.index || this.data.count}
             <button disabled={!this.showForwardButton()} className="history" onClick={this.forward}>
               &#10095;
             </button>
@@ -73,16 +74,15 @@ App = React.createClass({
   },
 
   isHistoryMode() {
-    return this.state.index !== 0;
+    return this.state.index !== null;
   },
 
   getHistoryIndex() {
-    return this.data.count - this.state.index;
+    return this.state.index ? this.data.count - this.state.index : null;
   },
 
   showBackButton() {
-    console.log(this.state.index, this.data.count, this.getHistoryIndex());
-    return (this.state.index === 0 && this.data.count > 1) || this.state.index > 1;
+    return (!this.isHistoryMode() && this.data.count > 1) || this.state.index > 1;
   },
 
   showForwardButton() {
@@ -103,7 +103,7 @@ App = React.createClass({
   forward() {
     if(this.showForwardButton()){
       if(this.getHistoryIndex() - 1 === 0) {
-        this.setState({index: 0});
+        this.setState({index: null});
       } else {
         this.setState({index: this.state.index + 1});
       }
@@ -122,7 +122,7 @@ App = React.createClass({
           this.setState({error: 'Sorry an error has occurred'});
         }
       } else {
-        this.setState({index: 0});
+        this.setState({index: null});
       }
       stop();
 
