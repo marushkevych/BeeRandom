@@ -5,7 +5,8 @@ App = React.createClass({
 
   getInitialState() {
     return {
-      error: false
+      error: false,
+      index: 0
     }
   },
 
@@ -23,16 +24,28 @@ App = React.createClass({
   // this is called reactively when data changes
   // and makes returned object available as this.data
   getMeteorData() {
+
     var beers = Beers.find({}, {sort: {createdAt: -1}, limit: 1}).fetch();
     return {
-      beer: beers[0],
+      beers: Beers.find({}, {sort: {createdAt: -1}}).fetch(),
+      beer: beers[this.state.index],
       currentUser: Meteor.user(),
       count: Beers.find().count()
     }
   },
 
   renderBeer() {
-    var beer = this.data.beer || {};
+
+    var index = 0;
+
+    // if in history mode
+    if(this.state.index !== 0){
+      index = this.state.index + this.data.count - this.state.historySize;
+    }
+
+    var beer = this.data.beers[index] || {};
+
+
     return (
         <ul>
           <li>
@@ -41,6 +54,13 @@ App = React.createClass({
                   Get More Beer
                 </button> : ''
             }
+
+            <button disabled={!this.showBackButton()} className="history" onClick={this.back}>
+              &#10094;
+            </button>
+            <button disabled={!this.showForwardButton()} className="history" onClick={this.forward}>
+              &#10095;
+            </button>
             {beer.name || "No beer yet"}
           </li>
 
@@ -51,6 +71,30 @@ App = React.createClass({
 
         </ul>
     );
+  },
+
+  showBackButton() {
+    return this.state.index < this.data.count - 1;
+  },
+
+  showForwardButton() {
+    return this.state.index > 0;
+  },
+
+  back() {
+    if(this.showBackButton()){
+      if(this.state.index === 0){
+        // enter history mode
+        this.state.historySize = this.data.count;
+      }
+      this.setState({index: this.state.index + 1});
+    }
+  },
+
+  forward() {
+    if(this.showForwardButton()){
+      this.setState({index: this.state.index - 1});
+    }
   },
 
   getNext() {
@@ -64,6 +108,8 @@ App = React.createClass({
           console.log(error);
           this.setState({error: 'Sorry an error has occurred'});
         }
+      } else {
+        this.setState({index: 0});
       }
       stop();
 
