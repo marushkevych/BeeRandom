@@ -1,6 +1,6 @@
 Meteor.publish("beers", function () {
   return Beers.find({userId: this.userId}, {
-    fields: { createdAt: 1, name: 1, image_url: 1 }
+    fields: { createdAt: 1, name: 1, image_url: 1, price_in_cents: 1 }
   });
 });
 

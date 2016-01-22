@@ -19,11 +19,22 @@ App = React.createClass({
   getMeteorData() {
 
     var beers = Beers.find({}, {sort: {createdAt: -1}, limit: 1}).fetch();
+
+    var allBeers = Beers.find({}).fetch();
+
+    // TODO CACHE last most expensive beer along with its index, so next time we only have to go through new beers
+    var max = allBeers.reduce(function (prev, beer) {
+      if(!prev) return beer;
+      return beer.price_in_cents > prev.price_in_cents ? beer : prev;
+    }, null);
+
+
     return {
       beers: Beers.find({}, {sort: {createdAt: -1}}).fetch(),
       beer: beers[this.state.index],
       currentUser: Meteor.user(),
-      count: Beers.find().count()
+      count: Beers.find().count(),
+      mostExpensiveBeer: max
     }
   },
 
@@ -66,6 +77,13 @@ App = React.createClass({
 
           { this.state.error ?
             <li className="error">{this.state.error}</li> : ''
+          }
+
+          { this.data.mostExpensiveBeer ?
+            <li className="error">
+              Most expensive beer:&nbsp;
+              {this.data.mostExpensiveBeer.name} ${this.data.mostExpensiveBeer.price_in_cents/100}
+            </li> : ''
           }
           <Beer key={beer._id} beer={beer} user={this.data.currentUser} />
 
